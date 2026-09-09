@@ -8,49 +8,119 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
 @st.cache_resource
 def load_pipeline():
     return joblib.load(os.path.join(BASE_DIR, "..", "src", "property_price_pipeline.pkl"))
+
 
 @st.cache_data
 def load_area_lookup():
     return pd.read_csv(os.path.join(BASE_DIR, "..", "src", "area_median_log_price.csv"), index_col=0)
 
-# ── Page config (must be first Streamlit command) ────────────────────────────
+
 st.set_page_config(page_title="BD Property Price Predictor", page_icon="🏠", layout="wide")
 
-# ── Custom styling ─────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-.main { background-color: #f7f9fb; }
-body, p, span, label, .stMarkdown { color: #C9A227 !important; }
-h1, h2, h3 { color: #C9A227 !important; }
-.stButton>button {
-    background-color: #1e3a5f;
-    color: white;
-    border-radius: 8px;
-    padding: 0.6em 1.5em;
-    font-weight: 600;
-    border: none;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
 }
-.stButton>button:hover { background-color: #2c5282; }
-[data-testid="stMetricValue"] { color: #C9A227 !important; font-size: 2rem; }
-[data-testid="stMetricLabel"] { color: #C9A227 !important; }
+
+.stApp {
+    background: radial-gradient(circle at top left, #14161f 0%, #0b0c12 60%);
+}
+
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #14161f 0%, #0b0c12 100%);
+    border-right: 1px solid rgba(201, 162, 39, 0.25);
+}
+
+h1 {
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(90deg, #E8C15A 0%, #C9A227 60%, #9c7a1a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px;
+}
+
+h2, h3, h4 {
+    font-family: 'Playfair Display', serif;
+    color: #E8C15A !important;
+}
+
+p, span, label, .stMarkdown, .stCaption {
+    color: #d8d2c2 !important;
+}
+
+section[data-testid="stSidebar"] h2 {
+    color: #E8C15A !important;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.35);
+    padding-bottom: 0.4em;
+    margin-bottom: 0.8em;
+}
+
+div[data-baseweb="select"] > div, .stNumberInput input {
+    background-color: #1b1e29 !important;
+    border: 1px solid rgba(201, 162, 39, 0.35) !important;
+    border-radius: 10px !important;
+    color: #f1ead8 !important;
+}
+
+.stButton>button {
+    background: linear-gradient(90deg, #C9A227 0%, #9c7a1a 100%);
+    color: #14161f;
+    border-radius: 10px;
+    padding: 0.7em 1.5em;
+    font-weight: 700;
+    border: none;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 14px rgba(201, 162, 39, 0.25);
+    transition: all 0.2s ease-in-out;
+}
+.stButton>button:hover {
+    background: linear-gradient(90deg, #E8C15A 0%, #C9A227 100%);
+    box-shadow: 0 6px 18px rgba(201, 162, 39, 0.4);
+    transform: translateY(-1px);
+}
+
+[data-testid="stMetric"] {
+    background: linear-gradient(145deg, #1b1e29, #14161f);
+    border: 1px solid rgba(201, 162, 39, 0.3);
+    border-radius: 14px;
+    padding: 1.2em 1em;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+}
+[data-testid="stMetricValue"] {
+    color: #E8C15A !important;
+    font-size: 1.9rem !important;
+    font-weight: 700 !important;
+}
+[data-testid="stMetricLabel"] {
+    color: #a89b78 !important;
+    text-transform: uppercase;
+    font-size: 0.75rem !important;
+    letter-spacing: 1px;
+}
+
+hr, [data-testid="stDivider"] {
+    border-color: rgba(201, 162, 39, 0.25) !important;
+}
+
+.stAlert {
+    background-color: #1b1e29 !important;
+    border: 1px solid rgba(201, 162, 39, 0.3) !important;
+    border-radius: 10px !important;
+    color: #d8d2c2 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# ── Load model + lookup table (cached so it only loads once) ────────────────
 pipeline = load_pipeline()
 area_median_lookup = load_area_lookup()
-
-# ── Header ───────────────────────────────────────────────────────────────────
-st.title("🏠 Bangladesh Property Price Predictor")
-st.write("Estimate a property's sale price and see exactly which factors drive that price.")
-st.divider()
-
-# ── Sidebar: inputs ──────────────────────────────────────────────────────────
-with st.sidebar:
-    st.header("Property Details")
 
 CITY_AREAS = {
     'dhaka': ['Adabor', 'Aftab Nagar', 'Agargaon', 'Badda', 'Banani', 'Banani DOHS',
@@ -78,18 +148,24 @@ CITY_AREAS = {
     'narayanganj-city': ['Demra', 'Fatulla', 'Narayanganj', 'Shiddhirganj']
 }
 
-city = st.selectbox("City", list(CITY_AREAS.keys()))
-area = st.selectbox("Area", CITY_AREAS[city])
+st.title("🏠 Bangladesh Property Price Predictor")
+st.write("Estimate a property's sale price and see exactly which factors drive that price.")
+st.divider()
 
-bedrooms = st.number_input("Bedrooms", min_value=1, max_value=10, value=3)
-bathrooms = st.number_input("Bathrooms", min_value=1, max_value=10, value=2)
-floor_area = st.number_input("Floor Area (sqft)", min_value=200, max_value=10000, value=1200)
-occupancy = st.selectbox("Occupancy Status", ["vacant", "occupied"])
-is_vacant = occupancy == "vacant"
+with st.sidebar:
+    st.header("Property Details")
 
-predict_clicked = st.button("Predict Price", use_container_width=True)
+    city = st.selectbox("City", list(CITY_AREAS.keys()))
+    area = st.selectbox("Area", CITY_AREAS[city])
 
-# ── Main area: results ───────────────────────────────────────────────────────
+    bedrooms = st.number_input("Bedrooms", min_value=1, max_value=10, value=3)
+    bathrooms = st.number_input("Bathrooms", min_value=1, max_value=10, value=2)
+    floor_area = st.number_input("Floor Area (sqft)", min_value=200, max_value=10000, value=1200)
+    occupancy = st.selectbox("Occupancy Status", ["vacant", "occupied"])
+    is_vacant = occupancy == "vacant"
+
+    predict_clicked = st.button("Predict Price", use_container_width=True)
+
 if predict_clicked:
     bed_bath_ratio = bedrooms / bathrooms if bathrooms > 0 else np.nan
 
