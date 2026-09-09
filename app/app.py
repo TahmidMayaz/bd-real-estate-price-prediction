@@ -40,14 +40,6 @@ h1, h2, h3 { color: #C9A227 !important; }
 """, unsafe_allow_html=True)
 
 # ── Load model + lookup table (cached so it only loads once) ────────────────
-@st.cache_resource
-def load_pipeline():
-    return joblib.load("../src/property_price_pipeline.pkl")
-
-@st.cache_data
-def load_area_lookup():
-    return pd.read_csv("../src/area_median_log_price.csv", index_col=0)
-
 pipeline = load_pipeline()
 area_median_lookup = load_area_lookup()
 
