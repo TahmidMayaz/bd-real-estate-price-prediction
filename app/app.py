@@ -52,23 +52,42 @@ st.divider()
 with st.sidebar:
     st.header("Property Details")
 
-    city = st.selectbox("City", ['dhaka', 'chattogram', 'cumilla', 'narayanganj-city', 'gazipur'])
+CITY_AREAS = {
+    'dhaka': ['Adabor', 'Aftab Nagar', 'Agargaon', 'Badda', 'Banani', 'Banani DOHS',
+        'Banasree', 'Banglamotors', 'Bangshal', 'Baridhara', 'Baridhara DOHS', 'Bashabo',
+        'Bashundhara R-A', 'Cantonment', 'Dakshin Khan', 'Demra', 'Dhanmondi', 'Dumni',
+        'Eskaton', 'Gulshan', 'Hatirpool', 'Hazaribag', 'Ibrahimpur', 'Joar Sahara',
+        'Kachukhet', 'Kafrul', 'Kalabagan', 'Kathalbagan', 'Keraniganj', 'Khilgaon',
+        'Khilkhet', 'Kuril', 'Lalbagh', 'Lalmatia', 'Maghbazar', 'Malibagh', 'Mirpur',
+        'Mohakhali', 'Mohammadpur', 'Motijheel', 'Mugdapara', 'Nadda', 'Niketan',
+        'Nikunja', 'North Shahjahanpur', 'Purbachal', 'Rampura', 'Savar', 'Shahjahanpur',
+        'Shantinagar', 'Shegunbagicha', 'Shiddheswari', 'Shyamoli', 'Shyampur',
+        'Sutrapur', 'Tejgaon', 'Turag', 'Uttar Khan', 'Uttara'],
+    'chattogram': ['10 No. North Kattali Ward', '11 No. South Kattali Ward',
+        '15 No. Bagmoniram Ward', '16 No. Chawk Bazaar Ward', '22 No. Enayet Bazaar Ward',
+        '29 No. West Madarbari Ward', '30 No. East Madarbari Ward', '31 No. Alkoron Ward',
+        '32 No. Andarkilla Ward', '33 No. Firingee Bazaar Ward', '36 Goshail Danga Ward',
+        '4 No Chandgaon Ward', '7 No. West Sholoshohor Ward', '9 No. North Pahartali Ward',
+        'Bakalia', 'Bayazid', 'Double Mooring', 'East Nasirabad', 'Halishahar', 'Hathazari',
+        'Jalalabad Housing Society', 'Jamal Khan', 'Kazir Dewri', 'Khulshi', 'Kotwali',
+        'Lal Khan Bazaar', 'Muradpur', 'Panchlaish', 'Patenga', 'Railway Colony',
+        'Sholokbahar', 'South Khulsi'],
+    'cumilla': ['Ashoktala', 'Bagichagaon', 'Chotora', 'Jhautola', 'Kandirpar',
+        'Moghultoli', 'Monohorpur', 'Race Course', 'Thakur Para'],
+    'gazipur': ['Chandra', 'Gazipur Sadar Upazila', 'Kaliakair', 'Kapasia', 'Sreepur'],
+    'narayanganj-city': ['Demra', 'Fatulla', 'Narayanganj', 'Shiddhirganj']
+}
 
-    area = st.selectbox("Area", [
-        'Mirpur', 'Narayanganj', 'Gazipur Sadar Upazila', '9 No. North Pahartali Ward',
-        'Bakalia', 'Double Mooring', 'Bayazid', '4 No Chandgaon Ward', 'Bashundhara R-A',
-        'Khulshi', 'Halishahar', 'Uttara', 'Badda', 'Bagichagaon', 'Sholokbahar',
-        'Mohammadpur', 'Dakshin Khan', '7 No. West Sholoshohor Ward', 'Muradpur',
-        '15 No. Bagmoniram Ward'
-    ])
+city = st.selectbox("City", list(CITY_AREAS.keys()))
+area = st.selectbox("Area", CITY_AREAS[city])
 
-    bedrooms = st.number_input("Bedrooms", min_value=1, max_value=10, value=3)
-    bathrooms = st.number_input("Bathrooms", min_value=1, max_value=10, value=2)
-    floor_area = st.number_input("Floor Area (sqft)", min_value=200, max_value=10000, value=1200)
-    occupancy = st.selectbox("Occupancy Status", ["vacant", "occupied"])
-    is_vacant = occupancy == "vacant"
+bedrooms = st.number_input("Bedrooms", min_value=1, max_value=10, value=3)
+bathrooms = st.number_input("Bathrooms", min_value=1, max_value=10, value=2)
+floor_area = st.number_input("Floor Area (sqft)", min_value=200, max_value=10000, value=1200)
+occupancy = st.selectbox("Occupancy Status", ["vacant", "occupied"])
+is_vacant = occupancy == "vacant"
 
-    predict_clicked = st.button("Predict Price", use_container_width=True)
+predict_clicked = st.button("Predict Price", use_container_width=True)
 
 # ── Main area: results ───────────────────────────────────────────────────────
 if predict_clicked:
