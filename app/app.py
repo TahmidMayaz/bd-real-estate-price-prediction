@@ -4,6 +4,17 @@ import numpy as np
 import joblib
 import shap
 import matplotlib.pyplot as plt
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+@st.cache_resource
+def load_pipeline():
+    return joblib.load(os.path.join(BASE_DIR, "..", "src", "property_price_pipeline.pkl"))
+
+@st.cache_data
+def load_area_lookup():
+    return pd.read_csv(os.path.join(BASE_DIR, "..", "src", "area_median_log_price.csv"), index_col=0)
 
 # ── Page config (must be first Streamlit command) ────────────────────────────
 st.set_page_config(page_title="BD Property Price Predictor", page_icon="🏠", layout="wide")
