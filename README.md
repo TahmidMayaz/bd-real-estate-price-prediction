@@ -85,8 +85,4 @@ streamlit run app.py
 
 - Prices reflect listing values as collected — no inflation adjustment was applied.
 - The model is unreliable for feature combinations rarely seen in training (e.g. very low bathroom count in an area where most comparable listings have 3+ bathrooms) — predictions in these edge cases should be treated with caution.
-- Dataset covers 5 cities only and does not capture year-over-year market trends.
-
----
-
-*Built as a portfolio project applying end-to-end ML engineering: data cleaning, leakage-safe feature engineering, model comparison, explainability, and deployment.*
+- Dataset covers 5 cities only and does not capture year-over-year model comparison, explainability, and deployment.
